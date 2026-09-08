@@ -399,6 +399,10 @@ python3 -m venv /opt/freezer-venv
 /opt/freezer-venv/bin/pip install --quiet --upgrade pip
 /opt/freezer-venv/bin/pip install --quiet pymysql git+https://opendev.org/openstack/freezer.git@master
 
+SITE_PACKAGES=$(/opt/freezer-venv/bin/python -c 'import site; print(site.getsitepackages()[0])')
+echo 'import warnings; warnings.simplefilter("ignore")' \
+    > "$SITE_PACKAGES/zzz_suppress_warnings.pth"
+
 mkdir -p /etc/freezer /var/log/freezer /var/lib/freezer
 
 # Write scheduler config. Auth must be provided BOTH as deprecated os-*
@@ -457,6 +461,7 @@ Environment="OS_IDENTITY_API_VERSION=3"
 Environment="OS_ENDPOINT_TYPE=publicURL"
 Environment="OS_INSECURE=true"
 Environment="PYTHONHTTPSVERIFY=0"
+Environment="PYTHONWARNINGS=ignore"
 ExecStart=/opt/freezer-venv/bin/freezer-scheduler \\
     --config-file /etc/freezer/freezer-scheduler.conf \\
     --no-daemon start
