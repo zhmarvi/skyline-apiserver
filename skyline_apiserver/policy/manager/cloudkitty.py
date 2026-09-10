@@ -23,16 +23,13 @@
 #   - cloudkitty/common/policies/v2/summary.py (summary:get_summary)
 #
 # Upstream gates every rating module / module_config operation on
-# "role:admin", and the v2 summary on "project reader or admin". The project
-# reader rule below also accepts "member" because many deployments grant
-# users the member role without also granting reader, and a project user is
-# expected to be able to see their own rating summary.
+# "role:admin", and the v2 summary on "project reader or admin". Keep this
+# rule aligned with CloudKitty so Skyline does not show the summary route to a
+# user whose request CloudKitty will reject.
 
 from . import base
 
-PROJECT_READER = (
-    "(role:reader or role:member or role:_member_) and project_id:%(project_id)s"
-)
+PROJECT_READER = "role:reader and project_id:%(project_id)s"
 SYSTEM_READER = "role:reader and system_scope:all"
 SYSTEM_ADMIN = "role:admin and system_scope:all"
 
